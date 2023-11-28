@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="../assets/icon.png" />
+  <title>Typing Game</title>
+  <link rel="stylesheet" href="../css/type.css" />
+</head>
+
+<body>
+  <h1>Typing Game</h1>
+
+  <div id="word-display"></div>
+  <input type="text" id="user-input" placeholder="Start typing..." oninput="checkInput()">
+
+  <div id="timer">Timer: <span id="time">60</span> seconds</div>
+  <div id="result"></div>
+
+  <button onclick="startGame()" id="start-btn">Start Game</button>
+  <button onclick="goBack()">Back</button>
+
+  <script>
+    var words = "This is a simple typing game. Try to type the words as fast as you can!";
+    var wordArray = words.split(' ');
+    var currentIndex = 0;
+    var timer;
+    var gameStarted = false;
+
+    function startGame() {
+      if (!gameStarted) {
+        currentIndex = 0;
+        shuffleArray(wordArray);
+        displayWord();
+        startTimer();
+        document.getElementById("user-input").value = "";
+        document.getElementById("result").textContent = "";
+        document.getElementById("start-btn").disabled = true; // Disable the button once the game starts
+        document.getElementById("user-input").disabled = false; // Enable the input field when the game starts
+        gameStarted = true;
+      }
+    }
+
+    function displayWord() {
+      document.getElementById("word-display").textContent = wordArray[currentIndex];
+    }
+
+    function checkInput() {
+      var userInput = document.getElementById("user-input").value.trim();
+      var currentWord = wordArray[currentIndex];
+
+      if (userInput === currentWord) {
+        currentIndex++;
+        document.getElementById("user-input").value = "";
+        displayWord();
+      }
+
+      if (currentIndex === wordArray.length) {
+        endGame();
+      }
+    }
+
+    function startTimer() {
+      var timeLeft = 60;
+      document.getElementById("time").textContent = timeLeft;
+
+      timer = setInterval(function () {
+        timeLeft--;
+        document.getElementById("time").textContent = timeLeft;
+
+        if (timeLeft === 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function endGame() {
+      clearInterval(timer);
+      document.getElementById("result").textContent = "Game Over! Words per minute: " + calculateWordsPerMinute();
+      document.getElementById("user-input").disabled = true; // Disable the input field when the game ends
+    }
+
+    function calculateWordsPerMinute() {
+      var totalTime = 60;
+      var wordsTyped = currentIndex;
+      var wordsPerMinute = (wordsTyped / totalTime) * 60;
+      return wordsPerMinute.toFixed(2);
+    }
+
+    function goBack() {
+      window.location.href = "../index.html";
+    }
+
+    // Fisher-Yates shuffle algorithm
+    function shuffleArray(array) {
+      for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+    }
+  </script>
+</body>
+
+</html>

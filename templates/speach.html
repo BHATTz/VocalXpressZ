@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>T-TO-S</title>
+    <link rel="stylesheet" href="../css/speach.css" />
+    <link href="../assets/icon.png" rel="icon" />
+    <!-- Meta viewport tag for responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <h1>Text-to-Speech</h1>
+    <input
+      type="text"
+      id="text-to-speech-input"
+      placeholder="Enter text here"
+      oninput="limitText(this, 36, 242)"
+    />
+    <br />
+    <label id="word-char-count">36 Words, 242 Characters</label>
+    <br /><br />
+    <label for="language-select">Select Language:</label>
+    <select id="language-select">
+      <option value="en">English</option>
+      <option value="hi">Hindi</option>
+    </select>
+    <button onclick="speakText()">Speak</button>
+    <button onclick="stopSpeech()">Stop</button>
+    <!-- Stop button -->
+    <h1>Document-to-Speech</h1>
+    <input type="file" id="document-upload" accept=".txt, .doc, .docx, .pdf" />
+    <br />
+    <label id="word-char-count">36 Words, 242 Characters</label>
+    <br />
+    <button onclick="speakUploadedDocument()">Speak Uploaded Document</button>
+
+    <button onclick="goBack()">Back</button>
+    <script>
+      var speaking = false; // Track if currently speaking
+      var synthesis = window.speechSynthesis;
+      var currentUtterance = null;
+
+      function speakText() {
+        var text = document.getElementById("text-to-speech-input").value;
+        var selectedLanguage = document.getElementById("language-select").value;
+
+        if (text.trim() === "") {
+          alert("Please enter some text before clicking Speak.");
+          return;
+        }
+
+        if (synthesis.speaking) {
+          synthesis.cancel(); // Stop previous speech if ongoing
+        }
+
+        var utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = selectedLanguage;
+        currentUtterance = utterance;
+        synthesis.speak(utterance);
+        speaking = true;
+      }
+
+      function speakUploadedDocument() {
+        var fileInput = document.getElementById("document-upload");
+        if (fileInput.files.length === 0) {
+          alert("Please select a document file to speak.");
+          return;
+        }
+
+        var selectedLanguage = document.getElementById("language-select").value;
+        var file = fileInput.files[0];
+
+        if (synthesis.speaking) {
+          synthesis.cancel(); // Stop previous speech if ongoing
+        }
+
+        var reader = new FileReader();
+        reader.onload = function (event) {
+          var text = event.target.result;
+          if (text.trim() === "") {
+            alert("The uploaded document is empty.");
+            return;
+          }
+
+          var utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = selectedLanguage;
+          currentUtterance = utterance;
+          synthesis.speak(utterance);
+          speaking = true;
+        };
+
+        reader.readAsText(file);
+      }
+
+      function stopSpeech() {
+        if (speaking && currentUtterance) {
+          currentUtterance.onend = null; // Remove the event handler
+          synthesis.cancel(); // Stop current speech
+          speaking = false;
+        }
+      }
+      function goBack() {
+        // Replace with the actual URL of your external index.html
+        window.location.href = "../index.html";
+      }
+    </script>
+  </body>
+</html>
