@@ -34,7 +34,7 @@ button {
 /* Responsive styles */
 @media (max-width: 768px) {
   body {
-    margin-top: 70%;
+    margin-top: 50%;
   }
 
   input {
@@ -51,7 +51,7 @@ button {
 
 @media (max-width: 480px) {
   body {
-    margin-top: 70%;
+    margin-top: 50%;
   }
 
   input {
